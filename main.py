@@ -1,12 +1,24 @@
-from flask import Flask, render_template,request,session,redirect
+from flask import Flask, render_template,url_for,request,session,redirect,flash
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin,login_user,logout_user
+from flask_login import UserMixin,login_user,logout_user,login_manager,LoginManager,login_required,current_user
 from werkzeug.security import generate_password_hash,check_password_hash
 
 #my database connection
 local_server = True
 app = Flask(__name__)
 app.secret_key='princysingh'
+
+# this is for getting unique user access
+login_manager=LoginManager(app)
+login_manager.login_view='login'
+
+@login_manager.user_loader
+def load_user(user_id):
+      return User.query.get(int(user_id))
+
+
+
+
 
 app.config['SQLALCHEMY_DATABASE_URI']='mysql://root:@localhost/hms'
 db=SQLAlchemy(app)
@@ -18,10 +30,22 @@ class Test(db.Model):
     email=db.Column(db.String(100))
 
 class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(50))
-    email = db.Column(db.String(50), unique=True)  # Set unique=True
-    password = db.Column(db.String(4))
+    email = db.Column(db.String(50),unique=True)
+    password = db.Column(db.String(1000))
+
+
+
+
+
+
+
+
+
+
+
+
 
 # here we will be creating endpoints and run the funtion ---------->>>
 @app.route('/')
@@ -37,10 +61,10 @@ def patients():
         return render_template('patients.html')
 
 @app.route('/bookings')
-def bookings():
-        return render_template('bookings.html')
+def bookings():       
+    return render_template('bookings.html')
 
-@app.route('/signup', methods=['POST', 'GET'])
+@app.route('/signup',methods=['POST', 'GET'])
 def signup():
     if request.method == "POST":
         username = request.form.get('username')
@@ -49,30 +73,48 @@ def signup():
         user = User.query.filter_by(email=email).first()
         
         if user:
-            print("Email already exists")
+            flash("Email already exists","warning")
             return render_template("signup.html", error="Email already exists")
 
         encpassword = generate_password_hash(password)
-        new_user = User(username=username, email=email, password=encpassword)
-
-        try:
-            db.session.add(new_user)
-            db.session.commit()
-            return redirect('/login')  # Redirect to login page after successful signup
-        except Exception as e:
-            print(f"Error occurred: {e}")
-            db.session.rollback()
-            return render_template("signup.html", error="An error occurred during signup")
-
-    return render_template("signup.html")  # For GET requests, just render the signup page
-
-@app.route('/login')
-def login():
+                # new_user = User(username=username, email=email, password=encpassword)
+                # try:
+                #     db.session.add(new_user)
+                #     db.session.commit()
+                #     return redirect('/login')  # Redirect to login page after successful signup
+                # except Exception as e:
+                #     print(f"Error occurred: {e}")
+                #     db.session.rollback()
+                #     return render_template("signup.html", error="An error occurred during signup")
+        newuser=User(username=username,email=email,password=encpassword)
+        db.session.add(newuser)
+        db.session.commit()
+        flash("signup done,login now","success")
         return render_template('login.html')
 
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    if request.method == "POST":
+        email = request.form.get('email')
+        password = request.form.get('password')
+        user = User.query.filter_by(email=email).first()
+
+        if user and check_password_hash(user.password, password):
+            login_user(user)  # This should log in the user
+            flash("login done","primary") 
+            return redirect(url_for('index'))  # Redirects to index page after login
+        else:
+            flash("Invalid information","danger")
+            return render_template('login.html')
+
+    return render_template('login.html')
+
 @app.route('/logout')
+@login_required
 def logout():
-        return render_template('logout.html')
+        logout_user()
+        flash("logout done","primary")
+        return redirect(url_for('login'))
 
 @app.route('/test')
 def test():

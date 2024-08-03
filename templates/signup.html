@@ -11,9 +11,25 @@ Signup Page
             <div class="card">
                 <div class="card-header bg-primary text-white text-center">
                     <h4>Signup Here</h4>
+                    <br>
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class ="alert alert-{{category}} alert-dismissible fade show" role="alert">{{message}}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
                 </div>
                 <div class="card-body">
+
                     <form action="/signup" method="POST">
+
                         <div class="form-group">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" name="username" required>
@@ -31,8 +47,8 @@ Signup Page
                         </div><br>
                         
                         <button type="submit" class="btn btn-primary btn-sm btn-block">Signup</button>
-                    </form><br>
-                    <h6>Already a user? <a href="/login">Login!</a></h6>
+                    </form>
+                    <br><h6>Already a user?<a href="/login">Login!</a></h6>
                 </div>
             </div>
         </div>
