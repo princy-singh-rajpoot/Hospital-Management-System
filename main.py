@@ -56,7 +56,8 @@ def index():
 def doctors():
         return render_template('doctors.html')
 
-@app.route('/patients')
+@app.route('/patients')  
+@login_required
 def patients():
         return render_template('patients.html')
 
@@ -64,7 +65,7 @@ def patients():
 def bookings():       
     return render_template('bookings.html')
 
-@app.route('/signup',methods=['POST', 'GET'])
+@app.route('/signup', methods=['POST', 'GET'])
 def signup():
     if request.method == "POST":
         username = request.form.get('username')
@@ -73,24 +74,25 @@ def signup():
         user = User.query.filter_by(email=email).first()
         
         if user:
-            flash("Email already exists","warning")
+            flash("Email already exists", "warning")
             return render_template("signup.html", error="Email already exists")
 
         encpassword = generate_password_hash(password)
-                # new_user = User(username=username, email=email, password=encpassword)
-                # try:
-                #     db.session.add(new_user)
-                #     db.session.commit()
-                #     return redirect('/login')  # Redirect to login page after successful signup
-                # except Exception as e:
-                #     print(f"Error occurred: {e}")
-                #     db.session.rollback()
-                #     return render_template("signup.html", error="An error occurred during signup")
-        newuser=User(username=username,email=email,password=encpassword)
-        db.session.add(newuser)
-        db.session.commit()
-        flash("signup done,login now","success")
-        return render_template('login.html')
+        new_user = User(username=username, email=email, password=encpassword)
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash("Signup successful, please log in", "success")
+            return redirect(url_for('login'))  # Redirect to login page after successful signup
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            db.session.rollback()
+            flash("An error occurred during signup", "danger")
+            return render_template("signup.html", error="An error occurred during signup")
+
+    # GET request handling
+    return render_template("signup.html")
+
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
