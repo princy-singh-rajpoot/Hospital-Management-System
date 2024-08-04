@@ -1,7 +1,8 @@
-from flask import Flask, render_template,url_for,request,session,redirect,flash
+from flask import Flask, render_template,url_for,request,session,redirect,flash,get_flashed_messages
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin,login_user,logout_user,login_manager,LoginManager,login_required,current_user
 from werkzeug.security import generate_password_hash,check_password_hash
+from sqlalchemy import text
 
 #my database connection
 local_server = True
@@ -35,7 +36,17 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(50),unique=True)
     password = db.Column(db.String(1000))
 
-
+class Patients(db.Model):
+     pid=db.Column(db.Integer,primary_key=True)
+     email=db.Column(db.String(50))
+     name=db.Column(db.String(50))
+     gender=db.Column(db.String(50))
+     slot=db.Column(db.String(50))
+     disease=db.Column(db.String(50))
+     time=db.Column(db.String(50),nullable=False)
+     date=db.Column(db.String(50),nullable=False)
+     dept=db.Column(db.String(50))
+     number=db.Column(db.String(50))
 
 
 
@@ -56,14 +67,46 @@ def index():
 def doctors():
         return render_template('doctors.html')
 
-@app.route('/patients')  
+@app.route('/patients', methods=['POST', 'GET'])
 @login_required
 def patients():
-        return render_template('patients.html')
+    if request.method == "POST":
+        email = request.form.get('email')
+        name = request.form.get('name')
+        gender = request.form.get('gender')
+        slot = request.form.get('slot')
+        disease = request.form.get('disease')
+        time = request.form.get('time')
+        date = request.form.get('date')
+        dept = request.form.get('dept')
+        number = request.form.get('number')
+
+        new_patient = Patients(
+            email=email,
+            name=name,
+            gender=gender,
+            slot=slot,
+            disease=disease,
+            time=time,
+            date=date,
+            dept=dept,
+            number=number
+        )
+
+        db.session.add(new_patient)
+        db.session.commit()
+
+        flash("Booking confirmed", "info")
+    return render_template('patients.html')
 
 @app.route('/bookings')
-def bookings():       
-    return render_template('bookings.html')
+@login_required
+def bookings():
+    em = current_user.email
+    query = text("SELECT * FROM patients WHERE email = :em")
+    with db.engine.connect() as conn:
+        result = conn.execute(query, {'em': em}).fetchall()
+    return render_template('bookings.html', query=result)
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
