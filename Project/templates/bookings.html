@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}
+Booking Page
+{% endblock title %}
+
+{% block body %}
+    
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+      <div class="container mt-3">
+          {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show mt-2" role="alert">
+                  <strong>{% if category == 'success' %}Success!{% elif category == 'danger' %}Error!{% elif category == 'warning' %}Warning!{% else %}Note{% endif %}</strong> {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+          {% endfor %}
+      </div>
+  {% endif %}
+{% endwith %}
+    
+<table class="table table-dark table-striped">
+    <thead>
+      <tr>
+        <th scope="col">SR.NO</th>
+        <th scope="col">EMAIL</th>
+        <th scope="col">NAME</th>
+        <th scope="col">GENDER</th>
+        <th scope="col">SLOT</th>
+        <th scope="col">DISEASE</th>
+        <th scope="col">TIME</th>
+        <th scope="col">DATE</th>
+        <th scope="col">DEPARTMENT</th>
+        <th scope="col">MOBILE NUMBER</th>
+        <th scope="col">UPDATE</th>
+        <th scope="col">DELETE</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for post in query %}
+      <tr>
+        <th scope="row">{{post.pid}}</th>
+        <td>{{post.email}}</td>
+        <td>{{post.name}}</td>
+        <td>{{post.gender}}</td>
+        <td>{{post.slot}}</td>
+        <td>{{post.disease}}</td>
+        <td>{{post.time}}</td>
+        <td>{{post.date}}</td>
+        <td>{{post.dept}}</td>
+        <td>{{post.number}}</td>
+        <td> <a href="/update/{{post.pid}}"><button class="btn btn-primary">UPDATE</button></a></td>
+        <td> <a href="/delete/{{post.pid}}"><button onclick="return confirmed('Are you sure you want to delete information?');" class="btn btn-danger">DELETE</button></a></td>
+    </tr>
+      {% endfor %}     
+    </tbody>
+  </table>
+{% endblock body %}

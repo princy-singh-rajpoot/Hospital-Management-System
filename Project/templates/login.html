@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}
+Login Page
+{% endblock title %}
+
+{% block body %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="container mt-3">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show mt-2" role="alert">
+        <strong>{% if category == 'success' %}Success!{% elif category == 'danger' %}Error!{% elif category == 'warning' %}Warning!{% else %}Note{% endif %}</strong> {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}
+
+<div class="container mt-3">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white text-center">
+                    <h4>Login</h4>
+                </div>
+                <div class="card-body">
+                    <br>
+
+                    <form action="/login" method="POST">
+                        <div class="form-group">
+                            <label for="email">Email address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div><br>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div><br>
+                        
+                        <button type="submit" class="btn btn-success btn-large btn-block">Login</button>
+                    </form>
+                      
+                    <br><h6>Account don't exists? <a href="/signup">Create a account!</a></h6>
+
+                </div> 
+            </div> 
+        </div>
+    </div>
+</div>
+{% endblock body %}

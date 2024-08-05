@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}
+Update Patient Information
+{% endblock title %}
+
+{% block body %}
+<div class="container mt-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10 mb-4">
+            <!-- Update Form -->
+            <div class="bg-light p-4 rounded shadow-sm">
+                <h4 class="text-center bg-warning text-dark p-2 rounded">Update Your Slot</h4>
+                <form action="/update/{{ posts.pid }}" method="post" class="mt-4">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" class="form-control" id="email" value="{{ posts.email }}" name="email" placeholder="Enter your email" required>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="name">Full Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ posts.name }}" placeholder="Enter Full Name" required>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="gender">Gender</label>
+                        <select class="form-control" id="gender" name="gender" required>
+                            <option value="male" {% if posts.gender == 'male' %} selected {% endif %}>Male</option>
+                            <option value="female" {% if posts.gender == 'female' %} selected {% endif %}>Female</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="slot">Preferred Slot</label>
+                        <select class="form-control" id="slot" name="slot" required>
+                            <option value="morning" {% if posts.slot == 'morning' %} selected {% endif %}>Morning</option>
+                            <option value="evening" {% if posts.slot == 'evening' %} selected {% endif %}>Evening</option>
+                            <option value="night" {% if posts.slot == 'night' %} selected {% endif %}>Night</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="disease">Enter Your Disease</label>
+                        <input type="text" class="form-control" id="disease" name="disease" value="{{ posts.disease }}" placeholder="Specify Your Disease" required>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="time">Preferred Time</label>
+                        <input type="time" class="form-control" value="{{ posts.time }}" id="time" name="time" required>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="date">Preferred Date</label>
+                        <input type="date" class="form-control" value="{{ posts.date }}" id="date" name="date" required>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="dept">Preferred Department</label>
+                        <input type="text" class="form-control" id="dept" name="dept" value="{{ posts.dept }}" placeholder="Enter preferred department" required>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="number">Phone Number</label>
+                        <input type="tel" class="form-control" id="number" name="number" value="{{ posts.number }}" placeholder="Enter your phone number" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning btn-block mt-4">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
