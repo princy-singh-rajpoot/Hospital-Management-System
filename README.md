@@ -56,6 +56,9 @@ This is a Flask-based web application for managing hospital operations, includin
 - `/login`: User login page.
 - `/register`: User registration page.
 - `/search`: Search functionality for doctors and departments.
+- `/doctors`: dDoctor registration page.
+- `/patients`: Patients Registration Page
+- `/booking`: Patient Booking page.
 
 ## Contributing
 
