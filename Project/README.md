@@ -29,6 +29,7 @@ This is a Flask-based web application for managing hospital operations, includin
      ```python
      app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://username:password@localhost/dbname'
      <!-- app.config['SQLALCHEMY_DATABASE_URI']='mysql://root:@localhost/hms' (hms is my db name)-->
+     In, PhpMyAdmin, import the hms.sql file.
      ```
 
 5. Run the application:
